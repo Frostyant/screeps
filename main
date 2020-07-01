@@ -67,6 +67,16 @@ module.exports.loop = function () {
             {align: 'left', opacity: 0.8});
     }
 
+    var towers = Game.rooms.W8N3.find(FIND_STRUCTURES, {
+        filter: (s) => s.structureType == STRUCTURE_TOWER
+    });
+    for (let tower of towers) {
+        var target = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+        if (target != undefined) {
+            tower.attack(target);
+        }
+    }
+
     for(var name in Game.creeps) {
         var creep = Game.creeps[name];
         if(creep.memory.role == 'harvester') {
