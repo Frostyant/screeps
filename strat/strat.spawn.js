@@ -8,30 +8,18 @@ var StratSpawn = {
 
     /** @param {spawn} spawn **/
     run: function(spawn) {
+
       let creepsInRoom = spawn.room.find(FIND_CREEPS);
 
-      var harvesters = _.filter(creepsInRoom, (creep) => creep.memory.role == 'harvester');
-      var upgraders = _.filter(creepsInRoom, (creep) => creep.memory.role == 'upgrader');
-      var builders = _.filter(creepsInRoom, (creep) => creep.memory.role == 'builder');
-      var repairers = _.filter(creepsInRoom, (creep) => creep.memory.role == 'repairer');
-      var fighters = _.filter(creepsInRoom, (creep) => creep.memory.role == 'fighter');
-      var claimers = _.filter(creepsInRoom, (creep) => creep.memory.role == 'claimer');
+      var mycreeps = _.filter(creepsInRoom,(creep) => creep.my)
+      var harvesters = _.filter(mycreeps, (creep) => creep.memory.role == 'harvester');
+      var upgraders = _.filter(mycreeps, (creep) => creep.memory.role == 'upgrader');
+      var builders = _.filter(mycreeps, (creep) => creep.memory.role == 'builder');
+      var repairers = _.filter(mycreeps, (creep) => creep.memory.role == 'repairer');
+      var fighters = _.filter(mycreeps, (creep) => creep.memory.role == 'fighter');
+      var claimers = _.filter(mycreeps, (creep) => creep.memory.role == 'claimer');
 
       var energy = spawn.room.energyCapacityAvailable;
-
-      if(fighters.length < 7) {
-          var newName = 'militia' + Game.time;
-          //console.log('Spawning new fighter: ' + newName);
-          spawn.spawnCreep([ATTACK,ATTACK,MOVE,MOVE], newName,
-              {memory: {role: 'fighter'}});
-      }
-
-      if(fighters.length < 10) {
-          var newName = 'screep-at-arms' + Game.time;
-          //console.log('Spawning new fighter: ' + newName);
-          spawn.spawnCreep([ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,MOVE,MOVE], newName,
-              {memory: {role: 'fighter'}});
-      }
 
       if(repairers.length < 2) {
           var newName = 'Repairer' + Game.time;
@@ -66,6 +54,20 @@ var StratSpawn = {
           //console.log('Spawning new harvester: ' + newName);
           spawn.spawnCreep([WORK,WORK,CARRY,MOVE], newName,
               {memory: {role: 'harvester'}});
+      }
+
+      if(fighters.length < 7) {
+          var newName = 'militia' + Game.time;
+          //console.log('Spawning new fighter: ' + newName);
+          spawn.spawnCreep([ATTACK,ATTACK,MOVE,MOVE], newName,
+              {memory: {role: 'fighter'}});
+      }
+
+      if(fighters.length < 10) {
+          var newName = 'screep-at-arms' + Game.time;
+          //console.log('Spawning new fighter: ' + newName);
+          spawn.spawnCreep([ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,MOVE,MOVE], newName,
+              {memory: {role: 'fighter'}});
       }
 
       if(spawn.spawning) {
