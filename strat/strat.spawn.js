@@ -21,6 +21,8 @@ var StratSpawn = {
       var repairers = _.filter(mycreeps, (creep) => creep.memory.role == 'repairer');
       var fighters = _.filter(mycreeps, (creep) => creep.memory.role == 'fighter');
       var claimers = _.filter(mycreeps, (creep) => creep.memory.role == 'claimer');
+      var conquistadors = _.filter(mycreeps, (creep) => creep.memory.role == 'conquistador');
+      var dharvesters = _.filter(mycreeps, (creep) => creep.memory.role == 'Dharvester');
 
       //strucutres
       var myStructures = _.filter(structuresInRoom,(structure) => structure.my);
@@ -104,16 +106,23 @@ var StratSpawn = {
           spawn.spawnCreep([WORK,WORK,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE], newName,
               {memory: {role: 'builder'}});
       }
+
+      if(conquistadors.length < 5) {
+          var newName = 'screep-at-arms conq' + Game.time;
+          //console.log('Spawning new harvester: ' + newName);
+          spawn.spawnCreep([ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,MOVE,MOVE,MOVE,MOVE,MOVE], newName,
+              {memory: {role: 'conquistador'}});
+      }
     }
 
-      if(fighters.length < 1) {
+      if(fighters.length < 5) {
           var newName = 'militia' + Game.time;
           //console.log('Spawning new fighter: ' + newName);
           spawn.spawnCreep([ATTACK,ATTACK,MOVE,MOVE], newName,
               {memory: {role: 'fighter'}});
       }
 
-      if(fighters.length < 0) {
+      if(fighters.length < 4) {
           var newName = 'screep-at-arms' + Game.time;
           //console.log('Spawning new fighter: ' + newName);
           spawn.spawnCreep([ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,MOVE,MOVE], newName,
