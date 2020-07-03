@@ -4,6 +4,7 @@ var roleUpgrader = require('role.upgrader');
 var roleBuilder = require('role.builder');
 var roleRepairer = require('role.repairer');
 var roleFighter = require('role.fighter');
+//var roleClaimer = require('role.claimer');
 
 module.exports.loop = function () {
 
@@ -48,8 +49,8 @@ module.exports.loop = function () {
         if(creep.memory.role == 'fighter') {
             roleFighter.run(creep);
         }
-        if(creep.memory.role == 'claimer') {
-            roleClaimer.run(creep);
-        }
+        //if(creep.memory.role == 'claimer') {
+      //      roleClaimer.run(creep);
+        //}
     }
 }
