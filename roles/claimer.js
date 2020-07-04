@@ -2,16 +2,16 @@ var roleClaimer = {
     // a function to run the logic for this role
     run: function(creep) {
 
-        flags = Game.flags
+        flags = Game.flags;
         var claims = _.filter(flags, (flag) => flag.color == COLOR_GREEN);
         //var claimers = _.filter(Game.creeps, (creep) => creep.memory.role == 'claimer');
 
         creep.memory.target = claims[0]
-        //console.log('Trying To Claim: ' + creep.memory.target.room);
+        //console.log('Trying To Claim: ' + );
 
 
         // if in target room
-        if (creep.room.name != creep.memory.target.room.name) {
+        if (creep.room.name != 'W7N3') {
 
             // find exit to target room
             //var exit = creep.room.findExitTo(creep.memory.target);
