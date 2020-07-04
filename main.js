@@ -8,10 +8,10 @@ var roleFighter = require('role.fighter');
 var roleConquistador = require('role.conquistador');
 var roleDHarvester = require('role.distanceharvester');
 var roleClaimer = require('role.claimer');
-//const fs = require('fs') 
+//const fs = require('fs')
 
 module.exports.loop = function () {
-    
+
   //Book keeping
 
   //Remove dead creeps
@@ -26,19 +26,23 @@ module.exports.loop = function () {
    //console.log('Testing Global Memory:', Memory.occupy);
 
 
-    var towers = Game.rooms.W8N3.find(FIND_STRUCTURES, {
-        filter: (s) => s.structureType == STRUCTURE_TOWER
-    });
-    for (let tower of towers) {
-        var target = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
-        if (target != undefined) {
-            tower.attack(target);
-        }
-    }
+
+
 
     for (let spawnName in Game.spawns) {
       let spawn = Game.spawns[spawnName];
       StratSpawn.run(spawn);
+
+      var towers = spawn.room.find(FIND_STRUCTURES, {
+          filter: (s) => s.structureType == STRUCTURE_TOWER
+      });
+
+      for (let tower of towers) {
+          var target = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+          if (target != undefined) {
+              tower.attack(target);
+          }
+      }
     }
 
     for(var name in Game.creeps) {
