@@ -6,10 +6,16 @@ var roleFighter = require('role.fighter');
 var stratClaim = require('strat.claim');
 var stratTargets = require('strat.targets');
 
+var lastTickCreeps = 0;
+
 var StratSpawn = {
 
     /** @param {spawn} spawn **/
     run: function(spawn) {
+
+        if(Game.time % 10 != 0 && Game.creeps.length < lastTickCreeps)
+            return;
+        lastTickCreeps = Game.creeps.length;
 
       let creepsInRoom = spawn.room.find(FIND_CREEPS);
       let structuresInRoom = spawn.room.find(FIND_STRUCTURES);
