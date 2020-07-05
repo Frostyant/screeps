@@ -13,9 +13,10 @@ var StratSpawn = {
     /** @param {spawn} spawn **/
     run: function(spawn) {
 
-        if(Game.time % 10 != 0 && Game.creeps.length >= lastTickCreeps)
+        if(Game.time % 10 != 0 && Game.creeps.length >= lastTickCreeps) {
+            lastTickCreeps = Game.creeps.length;
             return;
-        lastTickCreeps = Game.creeps.length;
+        }
 
       let creepsInRoom = spawn.room.find(FIND_CREEPS);
       let structuresInRoom = spawn.room.find(FIND_STRUCTURES);
