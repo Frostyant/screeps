@@ -13,7 +13,7 @@ var StratSpawn = {
     /** @param {spawn} spawn **/
     run: function(spawn) {
 
-        if(Game.time % 10 != 0 || Game.creeps.length < lastTickCreeps)
+        if(Game.time % 10 != 0 && Game.creeps.length >= lastTickCreeps)
             return;
         lastTickCreeps = Game.creeps.length;
 
