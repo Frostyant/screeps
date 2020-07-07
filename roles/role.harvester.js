@@ -1,7 +1,12 @@
+var stratRoad = require('strat.road');
+
 var roleHarvester = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
+
+        //Build Road If no raod here
+        stratRoad.run(creep);
 
         if(creep.memory.working == undefined){
           creep.memory.working = false;
