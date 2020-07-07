@@ -1,3 +1,5 @@
+var stratRoad = require('strat.road');
+
 var roleUpgrader = {
 
     /** @param {Creep} creep **/
