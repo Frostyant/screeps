@@ -5,16 +5,33 @@ var roleRepairer = require('role.repairer');
 var roleFighter = require('role.fighter');
 var stratClaim = require('strat.claim');
 var stratTargets = require('strat.targets');
+var utilLocalEconCreep = require('util.localeconcreep');
+
+var lastTickCreeps = 0;
 
 var StratSpawn = {
 
     /** @param {spawn} spawn **/
     run: function(spawn) {
 
+
+        //Only applying 1/10 ticks for performance
+        if(Game.time % 10 != 0 && Game.creeps.length >= lastTickCreeps) {
+            lastTickCreeps = Game.creeps.length;
+            return;
+        }
+
+      //Sets up the SpawningRole memory variable
+      if(spawn.memory.SpawningRole == undefined){
+        spawn.memory.SpawningRole = 1;
+      }
+
+
+      //Counting creeps & structures
       let creepsInRoom = spawn.room.find(FIND_CREEPS);
       let structuresInRoom = spawn.room.find(FIND_STRUCTURES);
 
-      //creeps
+      //creeps by jobs
       var mycreeps = _.filter(creepsInRoom,(creep) => creep.my)
       var harvesters = _.filter(mycreeps, (creep) => creep.memory.role == 'harvester');
       var upgraders = _.filter(mycreeps, (creep) => creep.memory.role == 'upgrader');
@@ -28,166 +45,44 @@ var StratSpawn = {
       var conquistadors = _.filter(Game.creeps, (creep) => creep.memory.role == 'conquistador');
       var dharvesters = _.filter(Game.creeps, (creep) => creep.memory.role == 'Dharvester');
 
-      //if(colonisers.length < 2 && claimers.length>0) {
-      //   builders[0].memory.targets = 'W7N3';
-      //   builders[1].memory.targets = 'W7N3';
-      //}
+      //Counts the number of local economy creeps
+      var localEconCreeps = [harvesters.length,upgraders.length,builders.length,repairers.length];
 
       //strucutres
-      var myStructures = _.filter(structuresInRoom,(structure) => structure.my);
-      var extensions = _.filter(structuresInRoom,(structure) => structure.structureType == 'extension');
+      //var myStructures = _.filter(structuresInRoom,(structure) => structure.my);
+      //var extensions = _.filter(structuresInRoom,(structure) => structure.structureType == 'extension');
 
-      var energy = spawn.room.energyCapacityAvailable;
+      var energy = spawn.room.energyAvailable;
+      var energyCap = spawn.room.energyCapacityAvailable;
 
 
 
+      //IF at max energy, spawn creeps
+      if (energy == energyCap){
+        //IF current spawning role requires more spawns
+        if(localEconCreeps[spawn.memory.SpawningRole] < Memory.localRoleCounts[spawn.memory.SpawningRole]){
+          //Spawn creep of required role
+          utilLocalEconCreep.run(spawn,spawn.memory.SpawningRole);
+          //Move to next role at next available spawn
 
-      //console.log('myStructures', extensions.length )
-      if(extensions.length < 10){
+        }else{
+          //IF too many of anyone role, try and build a long-distance miner
+          if(dharvesters.length < 2) {
+                var newName = 'Fast Harvester' + Game.time;
+                //console.log('Spawning new harvester: ' + newName);
+                spawn.spawnCreep([WORK,WORK,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], newName,
+                    {memory: {role: 'Dharvester'}});
+                //Move to next role at next available spawn
+                //spawn.memory.SpawningRole = ((spawn.memory.SpawningRole+1) % 4);
+            }
+        }
+        spawn.memory.SpawningRole = ((spawn.memory.SpawningRole+1) % 4);
 
-      if(harvesters.length < 3) {
-          var newName = 'Harvester' + Game.time;
-          //console.log('Spawning new harvester: ' + newName);
-          spawn.spawnCreep([WORK,CARRY,MOVE], newName,
-              {memory: {role: 'harvester'}});
-      }
 
-      if(upgraders.length < 3) {
-          var newName = 'Upgrader' + Game.time;
-          //console.log('Spawning new upgrader: ' + newName);
-          spawn.spawnCreep([WORK,WORK,CARRY,MOVE], newName,
-              {memory: {role: 'upgrader'}});
-      }
-
-      if(builders.length < 2) {
-          var newName = 'Builder' + Game.time;
-          //console.log('Spawning new builder: ' + newName);
-          spawn.spawnCreep([WORK,WORK,CARRY,MOVE], newName,
-              {memory: {role: 'builder'}});
-      }
-
-      if(repairers.length < 1) {
-          var newName = 'Repairer' + Game.time;
-          //console.log('Spawning new repairer: ' + newName);
-          spawn.spawnCreep([WORK,WORK,CARRY,MOVE], newName,
-              {memory: {role: 'repairer'}});
       }
 
 
-      if(upgraders.length < 5) {
-          var newName = 'Fast-Upgrader' + Game.time;
-          //console.log('Spawning new upgrader: ' + newName);
-          spawn.spawnCreep([WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE], newName,
-              {memory: {role: 'upgrader'}});
-      }
-    }else{
 
-      //stratClaim.run(spawn)
-
-      if(harvesters.length < 3) {
-          var newName = 'Pickaxe Harvester' + Game.time;
-          //console.log('Spawning new harvester: ' + newName);
-          spawn.spawnCreep([WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,MOVE], newName,
-              {memory: {role: 'harvester'}});
-      }
-
-      if(harvesters.length < 3) {
-          var newName = 'Shovel Harvester' + Game.time;
-          //console.log('Spawning new harvester: ' + newName);
-          spawn.spawnCreep([WORK,WORK,WORK,WORK,CARRY,MOVE], newName,
-              {memory: {role: 'harvester'}});
-      }
-
-      if(harvesters.length < 2) {
-          var newName = 'Harvester' + Game.time;
-          //console.log('Spawning new harvester: ' + newName);
-          spawn.spawnCreep([WORK,WORK,CARRY,MOVE], newName,
-              {memory: {role: 'harvester'}});
-      }
-
-      if(upgraders.length < 6) {
-          var newName = 'Faster Upgrader' + Game.time;
-          //console.log('Spawning new upgrader: ' + newName);
-          spawn.spawnCreep([WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE], newName,
-              {memory: {role: 'upgrader'}});
-      }
-
-      if(upgraders.length < 2) {
-          var newName = 'Upgrader' + Game.time;
-          //console.log('Spawning new upgrader: ' + newName);
-          spawn.spawnCreep([WORK,WORK,CARRY,MOVE,MOVE], newName,
-              {memory: {role: 'upgrader'}});
-      }
-
-
-      if(dharvesters.length < 4*Memory.occupy.length) {
-          var newName = 'Fast Harvester' + Game.time;
-          //console.log('Spawning new harvester: ' + newName);
-          spawn.spawnCreep([WORK,WORK,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], newName,
-              {memory: {role: 'Dharvester'}});
-      }
-
-
-      if(builders.length < 2) {
-          var newName = 'Faster Builder' + Game.time;
-          //console.log('Spawning new builder: ' + newName);
-          spawn.spawnCreep([WORK,WORK,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE], newName,
-              {memory: {role: 'builder'}});
-      }
-
-      if(repairers.length < 2) {
-          var newName = 'Repairer' + Game.time;
-          //console.log('Spawning new repairer: ' + newName);
-          spawn.spawnCreep([WORK,WORK,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE], newName,
-              {memory: {role: 'repairer'}});
-      }
-      /*
-      if(conquistadors.length < 1) {
-          var newName = 'screep-at-arms conq' + Game.time;
-          //console.log('Spawning new harvester: ' + newName);
-          spawn.spawnCreep([ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,MOVE,MOVE], newName,
-              {memory: {role: 'conquistador'}});
-      }
-        */
-
-    }
-
-    if(harvesters.length < 3) {
-        var newName = 'Harvester' + Game.time;
-        //console.log('Spawning new harvester: ' + newName);
-        spawn.spawnCreep([WORK,WORK,CARRY,MOVE], newName,
-            {memory: {role: 'harvester'}});
-    }
-
-    if(upgraders.length < 3) {
-        var newName = 'Better Upgrader' + Game.time;
-        //console.log('Spawning new upgrader: ' + newName);
-        spawn.spawnCreep([WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE], newName,
-            {memory: {role: 'upgrader'}});
-    }
-
-    if(upgraders.length < 1) {
-        var newName = 'Upgrader' + Game.time;
-        //console.log('Spawning new upgrader: ' + newName);
-        spawn.spawnCreep([WORK,CARRY,MOVE], newName,
-            {memory: {role: 'upgrader'}});
-    }
-
-
-    /*
-      if(fighters.length < 1) {
-          var newName = 'militia' + Game.time;
-          //console.log('Spawning new fighter: ' + newName);
-          spawn.spawnCreep([ATTACK,ATTACK,MOVE,MOVE], newName,
-              {memory: {role: 'fighter'}});
-      }
-
-      if(fighters.length < 2) {
-          var newName = 'screep-at-arms' + Game.time;
-          //console.log('Spawning new fighter: ' + newName);
-          spawn.spawnCreep([ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,MOVE,MOVE], newName,
-              {memory: {role: 'fighter'}});
-      }*/
 
       if(spawn.spawning) {
           var spawningCreep = Game.creeps[spawn.spawning.name];

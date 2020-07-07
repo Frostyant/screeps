@@ -1,5 +1,7 @@
 var StratSpawn = require('strat.spawn');
 var StratTargets = require('strat.targets');
+var stratTemplates = require('strat.templates');
+var stratEcon = require('strat.economy');
 var roleHarvester = require('role.harvester');
 var roleUpgrader = require('role.upgrader');
 var roleBuilder = require('role.builder');
@@ -23,6 +25,8 @@ module.exports.loop = function () {
     }
    //Update Global Target Variables
    StratTargets.run();
+   stratTemplates.run();
+   stratEcon.run();
    //console.log('Testing Global Memory:', Memory.occupy);
 
 

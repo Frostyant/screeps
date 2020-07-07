@@ -16,7 +16,7 @@ var roleRepairer = {
             // switch state
             creep.memory.working = true;
         }
-        console.log('Repairer Status', creep.memory.working)
+        //console.log('Repairer Status', creep.memory.working)
 
         // if creep is supposed to repair something
         if (creep.memory.working == true) {
@@ -24,7 +24,7 @@ var roleRepairer = {
             // Exclude walls because they have way too many max hits and would keep
             // our repairers busy forever. We have to find a solution for that later.
             const targets = creep.room.find(FIND_STRUCTURES, {
-            filter: object => object.hits < object.hitsMax
+            filter: object => object.hits < object.hitsMax && object.structureType != STRUCTURE_WALL
             });
 
             targets.sort((a,b) => a.hits - b.hits);

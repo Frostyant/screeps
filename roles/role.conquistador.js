@@ -4,6 +4,8 @@ var roleConquistador = {
     run: function(creep) {
         var enemies= creep.room.find(FIND_HOSTILE_CREEPS);
 
+
+
         if (enemies.length){
             if(creep.attack(enemies[0]) == ERR_NOT_IN_RANGE) {
 
@@ -17,6 +19,8 @@ var roleConquistador = {
 
           creep.memory.target = occupy[0]
           //console.log('Trying To Claim: ' + creep.memory.target.room);
+
+          console.log('Occupying: ' + creep.memory.target.room.name);
 
           creep.moveTo(occupy[0]);
         }
