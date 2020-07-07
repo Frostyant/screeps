@@ -81,6 +81,16 @@ var StratSpawn = {
 
       }
 
+      //To avoid getting stuck
+      if(harvesters.length < 1) {
+            var newName = 'Harvester' + Game.time;
+            //console.log('Spawning new harvester: ' + newName);
+            spawn.spawnCreep([WORK,WORK,CARRY,MOVE], newName,
+                {memory: {role: 'harvester'}});
+            //Move to next role at next available spawn
+            //spawn.memory.SpawningRole = ((spawn.memory.SpawningRole+1) % 4);
+        }
+
 
 
 
