@@ -1,5 +1,6 @@
 var StratSpawn = require('strat.spawn');
 var StratTargets = require('strat.targets');
+var stratDeEscalate = require('strat.deescalate');
 var stratTemplates = require('strat.templates');
 var stratEcon = require('strat.economy');
 var roleHarvester = require('role.harvester');
@@ -15,7 +16,9 @@ var roleClaimer = require('role.claimer');
 module.exports.loop = function () {
 
   //Book keeping
-
+  //if (Memory.threat != undefined){
+  //  console.log('Threat Level: ' + Memory.threat)
+  //}
   //Remove dead creeps
     for(var name in Memory.creeps) {
         if(!Game.creeps[name]) {
@@ -27,6 +30,7 @@ module.exports.loop = function () {
    StratTargets.run();
    stratTemplates.run();
    stratEcon.run();
+   stratDeEscalate.run();
    //console.log('Testing Global Memory:', Memory.occupy);
 
 

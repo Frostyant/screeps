@@ -5,7 +5,9 @@ var roleRepairer = require('role.repairer');
 var roleFighter = require('role.fighter');
 var stratClaim = require('strat.claim');
 var stratTargets = require('strat.targets');
+var stratDefence = require('strat.defence');
 var utilLocalEconCreep = require('util.localeconcreep');
+var utilReportThreat = require('util.reportThreat');
 
 var lastTickCreeps = 0;
 
@@ -14,7 +16,7 @@ var StratSpawn = {
     /** @param {spawn} spawn **/
     run: function(spawn) {
 
-
+        stratDefence.run(spawn);
         //Only applying 1/10 ticks for performance
         if(Game.time % 10 != 0 && Game.creeps.length >= lastTickCreeps) {
             lastTickCreeps = Game.creeps.length;
@@ -56,6 +58,9 @@ var StratSpawn = {
       var energyCap = spawn.room.energyCapacityAvailable;
 
 
+      if(harvesters.length < 2) {
+        spawn.memory.SpawningRole = 0;
+      }
 
       //IF at max energy, spawn creeps
       if (energy == energyCap){
@@ -67,7 +72,7 @@ var StratSpawn = {
 
         }else{
           //IF too many of anyone role, try and build a long-distance miner
-          if(dharvesters.length < 2) {
+          if(dharvesters.length < 4*Memory.occupy.length) {
                 var newName = 'Fast Harvester' + Game.time;
                 //console.log('Spawning new harvester: ' + newName);
                 spawn.spawnCreep([WORK,WORK,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], newName,
@@ -80,6 +85,16 @@ var StratSpawn = {
 
 
       }
+
+      //To avoid getting stuck
+      if(harvesters.length < 1) {
+            var newName = 'Harvester' + Game.time;
+            //console.log('Spawning new harvester: ' + newName);
+            spawn.spawnCreep([WORK,WORK,CARRY,MOVE], newName,
+                {memory: {role: 'harvester'}});
+            //Move to next role at next available spawn
+            //spawn.memory.SpawningRole = ((spawn.memory.SpawningRole+1) % 4);
+        }
 
 
 
